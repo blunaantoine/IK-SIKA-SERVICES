@@ -47,5 +47,14 @@ test
 prompt
 
 server.log
+
 # Skills directory
 /skills/
+
+# Database files
+*.db
+*.db-journal
+db/
+
+# Development scripts
+.zscripts/

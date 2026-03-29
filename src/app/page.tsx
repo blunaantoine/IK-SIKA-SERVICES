@@ -954,6 +954,28 @@ function UsersTab() {
 function AdminDashboard() {
   const [activeModule, setActiveModule] = useState("dashboard");
 
+  const handleLogout = async () => {
+    try {
+      // Get current session to retrieve user ID
+      const sessionRes = await fetch("/api/auth/session");
+      const session = await sessionRes.json();
+      
+      if (session?.user?.id) {
+        // Call logout API to mark user as offline
+        await fetch("/api/auth/logout", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ userId: session.user.id }),
+        });
+      }
+    } catch (error) {
+      console.error("Logout error:", error);
+    }
+    
+    // Sign out and redirect
+    signOut({ callbackUrl: "/" });
+  };
+
   const modules = [
     { id: "dashboard", label: "Tableau de Bord", icon: LayoutDashboard },
     { id: "motos", label: "Motos", icon: Bike },
@@ -988,7 +1010,7 @@ function AdminDashboard() {
           </ul>
         </nav>
         <div className="p-4 border-t border-gray-200">
-          <Button variant="outline" className="w-full" onClick={() => signOut({ callbackUrl: "/" })}><LogOut className="w-4 h-4 mr-2" />Déconnexion</Button>
+          <Button variant="outline" className="w-full" onClick={handleLogout}><LogOut className="w-4 h-4 mr-2" />Déconnexion</Button>
         </div>
       </aside>
       <main className="flex-1 overflow-auto"><div className="p-6">

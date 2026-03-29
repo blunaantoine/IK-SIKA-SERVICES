@@ -46,6 +46,7 @@ model User {
   name             String
   role             UserRole  @default(ASSISTANT)
   isActive         Boolean   @default(true)
+  lastLoginAt      DateTime?
   resetToken       String?
   resetTokenExpiry DateTime?
   createdAt        DateTime  @default(now())

@@ -2,6 +2,7 @@ import { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { db } from "./db";
 import { UserRole } from "@prisma/client";
+import * as bcrypt from "bcryptjs";
 
 declare module "next-auth" {
   interface Session {
@@ -55,10 +56,18 @@ export const authOptions: NextAuthOptions = {
           return null;
         }
 
-        // Simple password comparison (in production, use bcrypt)
-        if (user.password !== credentials.password) {
+        // Compare password with bcrypt
+        const passwordMatch = await bcrypt.compare(credentials.password, user.password);
+
+        if (!passwordMatch) {
           return null;
         }
+
+        // Update last login time
+        await db.user.update({
+          where: { id: user.id },
+          data: { lastLoginAt: new Date() },
+        });
 
         return {
           id: user.id,
