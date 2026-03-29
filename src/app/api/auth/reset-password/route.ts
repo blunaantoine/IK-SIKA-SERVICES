@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import * as bcrypt from "bcryptjs";
 
 export async function POST(request: NextRequest) {
   try {
@@ -37,11 +38,14 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Hash password with bcrypt
+    const hashedPassword = await bcrypt.hash(password, 10);
+
     // Update password and clear reset token
     await db.user.update({
       where: { id: user.id },
       data: {
-        password,
+        password: hashedPassword,
         resetToken: null,
         resetTokenExpiry: null,
       },

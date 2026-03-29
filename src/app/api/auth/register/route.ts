@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { UserRole } from "@prisma/client";
+import * as bcrypt from "bcryptjs";
 
 export async function POST(request: NextRequest) {
   try {
@@ -26,11 +27,14 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Hash password with bcrypt
+    const hashedPassword = await bcrypt.hash(password, 10);
+
     // Create new user (default role is ASSISTANT)
     const user = await db.user.create({
       data: {
         email,
-        password, // In production, hash the password with bcrypt
+        password: hashedPassword,
         name,
         role: UserRole.ASSISTANT,
         isActive: true,
