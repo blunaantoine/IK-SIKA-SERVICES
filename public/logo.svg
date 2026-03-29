@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 viewBox="0 0 200 80" style="enable-background:new 0 0 200 80;" xml:space="preserve">
+<defs>
+  <style type="text/css">
+    .ik-gray{fill:#333333;}
+    .ik-green{fill:#4CAF50;}
+    .ik-gray-light{fill:#666666;}
+  </style>
+</defs>
+
+<!-- K Stylisé -->
+<g transform="translate(10, 10)">
+  <!-- Partie grise du K -->
+  <polygon class="ik-gray" points="0,0 8,0 8,25 0,25"/>
+  <polygon class="ik-gray" points="0,12.5 8,12.5 25,0 17,0"/>
+  
+  <!-- Partie verte du K -->
+  <polygon class="ik-green" points="8,12.5 17,12.5 25,25 17,25"/>
+</g>
+
+<!-- Texte IK-SIKA -->
+<text x="50" y="35" font-family="Arial, sans-serif" font-size="28" font-weight="bold">
+  <tspan class="ik-gray">IK</tspan>
+  <tspan class="ik-gray">-</tspan>
+  <tspan class="ik-green">SIKA</tspan>
+</text>
+
+<!-- Texte SERVICES -->
+<text x="50" y="55" font-family="Arial, sans-serif" font-size="14" class="ik-gray-light">SERVICES</text>
+
+<!-- Ligne décorative -->
+<line x1="50" y1="60" x2="90" y2="60" stroke="#CCCCCC" stroke-width="1"/>
+<line x1="130" y1="60" x2="170" y2="60" stroke="#CCCCCC" stroke-width="1"/>
+</svg>

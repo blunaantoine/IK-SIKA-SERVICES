@@ -1,0 +1,137 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  ADMIN
+  ASSISTANT
+}
+
+enum MotoState {
+  ACTIVE
+  BROKEN
+  MAINTENANCE
+  RENTED
+}
+
+enum LivreurStatus {
+  ACTIVE
+  INACTIVE
+}
+
+enum ContractType {
+  CDD
+  CDI
+  FREELANCE
+}
+
+enum LocationStatus {
+  ACTIVE
+  COMPLETED
+  CANCELLED
+}
+
+model User {
+  id               String    @id @default(cuid())
+  email            String    @unique
+  password         String
+  name             String
+  role             UserRole  @default(ASSISTANT)
+  isActive         Boolean   @default(true)
+  resetToken       String?
+  resetTokenExpiry DateTime?
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+}
+
+model Moto {
+  id           String         @id @default(cuid())
+  number       String         @unique
+  name         String?
+  purchaseDate DateTime?
+  state        MotoState      @default(ACTIVE)
+  lastRevision DateTime?
+  nextRevision DateTime?
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  repairs      RepairHistory[]
+  assignments  Livreur[]
+  locations    Location[]
+}
+
+model RepairHistory {
+  id          String   @id @default(cuid())
+  motoId      String
+  moto        Moto     @relation(fields: [motoId], references: [id], onDelete: Cascade)
+  description String
+  date        DateTime @default(now())
+  cost        Float?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Livreur {
+  id           String                  @id @default(cuid())
+  firstName    String
+  lastName     String
+  phone        String?
+  startDate    DateTime?
+  contractType ContractType            @default(CDD)
+  motoId       String?
+  moto         Moto?                   @relation(fields: [motoId], references: [id], onDelete: SetNull)
+  status       LivreurStatus           @default(ACTIVE)
+  createdAt    DateTime                @default(now())
+  updatedAt    DateTime                @updatedAt
+  dailyRecords ComptabiliteJournaliere[]
+}
+
+model ComptabiliteJournaliere {
+  id              String   @id @default(cuid())
+  livreurId       String
+  livreur         Livreur  @relation(fields: [livreurId], references: [id], onDelete: Cascade)
+  date            DateTime
+  deliveries      Int      @default(0)
+  amountCollected Float    @default(0)
+  expenses        Float    @default(0)
+  amountToRemit   Float    @default(0)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@unique([livreurId, date])
+}
+
+model Client {
+  id           String     @id @default(cuid())
+  firstName    String
+  lastName     String
+  phone        String
+  address      String?
+  idCardNumber String?
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+  locations    Location[]
+}
+
+model Location {
+  id            String         @id @default(cuid())
+  clientId      String
+  client        Client         @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  motoId        String
+  moto          Moto           @relation(fields: [motoId], references: [id], onDelete: Cascade)
+  startDate     DateTime
+  endDate       DateTime?
+  dailyRate     Float
+  depositAmount Float?
+  status        LocationStatus @default(ACTIVE)
+  notes         String?
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+}
